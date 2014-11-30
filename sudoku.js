@@ -1,3 +1,4 @@
+var sudoku = (function() {
 function newPuzzle() {
 	var html='<table>';
 	var v=0;
@@ -32,7 +33,6 @@ function newPuzzle() {
 	document.getElementById('pzl').innerHTML=html;
 	document.getElementById('msg').innerHTML='';
 }
-window.addEventListener('load', newPuzzle, false);
 function solver() {
 	//declare local variables
 	var masterLooper=0;
@@ -194,8 +194,8 @@ function updateArray() {
 	//scan for completed cells and update array
 	for (i=0; i<=80; i++) {
 		//get cell value
-		var e=document.getElementById(i);
-		var v=e.options[e.selectedIndex].value;
+		var e = document.getElementById(i);
+		var v = e.options[e.selectedIndex].value;
 		if(v!="") {
 			//get row (r) from i
 			r=getRow(i);
@@ -425,3 +425,21 @@ function getColumn(ii) {
 		return Math.round((ii+1)-9*Math.floor((ii+1)/9));
 	}
 }
+
+document.getElementById('btnNewPzl').onclick = newPuzzle;
+document.getElementById('btnSolve').onclick = solver;
+console.log(document.getElementById('btnSolve'));
+
+function on() {
+	newPuzzle();
+}
+function off() {
+
+}
+
+return {
+	on: on,
+	off: off
+};
+}());
+sudoku.on();
