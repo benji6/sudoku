@@ -45,9 +45,10 @@ var divMsg;
 		this.blur && this.blur();
 	}
 	divMsg.className = 'msg';
-	
-	document.body.appendChild(viewHolder);
 }());
+function appendView() {
+	document.body.appendChild(viewHolder);
+}
 
 function newPuzzle() {
 	var html='<table>';
@@ -480,6 +481,7 @@ btnNewPzl.onclick = newPuzzle;
 btnSolve.onclick = solver;
 
 function on() {
+	appendView();
 	newPuzzle();
 }
 function off() {
