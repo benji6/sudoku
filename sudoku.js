@@ -1,4 +1,54 @@
 var sudoku = (function() {
+
+//create text view
+var viewHolder = document.createElement('div');
+var btnNewPzl;
+var btnSolve;
+var divPzl;
+var divMsg;
+
+(function() {
+	var curry = function(func) {
+		var curried = function(args) {
+			if (args.length >= func.length) {
+				return func.apply(null, args);
+			}
+			return function() {
+				return curried(args.concat(Array.prototype.slice.apply(arguments)));
+			};
+		};
+		return curried(Array.prototype.slice.apply(arguments, [1]));
+	};
+	var addView = function(parentEl, childEl, txtNode) {
+		var childElement = document.createElement(childEl);
+		childElement.appendChild(document.createTextNode(txtNode));
+		parentEl.appendChild(childElement);
+		return childElement;
+	};
+	var curryAddView = curry(addView);
+	var addViewToVH = curryAddView(viewHolder);
+
+	var addH2 = addViewToVH('h2');
+	var addButton = addViewToVH('button');
+	var addDiv = addViewToVH('div');
+	
+	addH2('Sudoku Solver');
+	btnNewPzl = addButton('New Puzzle');
+	btnSolve = addButton('Solve!');
+	divPzl = addDiv('');
+	divMsg = addDiv('');
+
+	btnNewPzl.onfocus = function() {
+		this.blur && this.blur();
+	}
+	btnSolve.onfocus = function() {
+		this.blur && this.blur();
+	}
+	divMsg.className = 'msg';
+	
+	document.body.appendChild(viewHolder);
+}());
+
 function newPuzzle() {
 	var html='<table>';
 	var v=0;
@@ -30,8 +80,8 @@ function newPuzzle() {
 		html=html+'</tr>';
 	}
 	html=html+'</table>';
-	document.getElementById('pzl').innerHTML=html;
-	document.getElementById('msg').innerHTML='';
+	divPzl.innerHTML = html;
+	divMsg.innerHTML='';
 }
 function solver() {
 	//declare local variables
@@ -68,12 +118,12 @@ function solver() {
 	}
 	//Check whether puzzle is valid
 	if (checkPzlValid()==false) {
-		document.getElementById('msg').innerHTML='Puzzle setup is invalid: '+strInvalidPzlReadout;
+		divMsg.innerHTML='Puzzle setup is invalid: '+strInvalidPzlReadout;
 		return;
 	}	
 	//Check whether puzzle is complete
 	if (checkPzlComplete()==true) {
-		document.getElementById('msg').innerHTML='Puzzle complete!';
+		divMsg.innerHTML='Puzzle complete!';
 		return;
 	}
 	//Master Looper
@@ -90,7 +140,7 @@ function solver() {
 		}
 		if (booChange==false) {
 			if (checkPzlValid()==true && checkPzlComplete()==true) {
-				document.getElementById('msg').innerHTML='Puzzle complete!';
+				divMsg.innerHTML='Puzzle complete!';
 				return;
 			}
 			bruteForce();
@@ -426,15 +476,14 @@ function getColumn(ii) {
 	}
 }
 
-document.getElementById('btnNewPzl').onclick = newPuzzle;
-document.getElementById('btnSolve').onclick = solver;
-console.log(document.getElementById('btnSolve'));
+btnNewPzl.onclick = newPuzzle;
+btnSolve.onclick = solver;
 
 function on() {
 	newPuzzle();
 }
 function off() {
-
+	viewHolder.parentNode && viewHolder.parentNode.removeChild(viewHolder);
 }
 
 return {
