@@ -481,8 +481,8 @@ btnNewPzl.onclick = newPuzzle;
 btnSolve.onclick = solver;
 
 function on() {
-	appendView();
 	newPuzzle();
+	appendView();
 }
 function off() {
 	viewHolder.parentNode && viewHolder.parentNode.removeChild(viewHolder);
