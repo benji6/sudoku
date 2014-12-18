@@ -40,10 +40,10 @@ var divMsg;
 
 	btnNewPzl.onfocus = function() {
 		this.blur && this.blur();
-	}
+	};
 	btnSolve.onfocus = function() {
 		this.blur && this.blur();
-	}
+	};
 	divMsg.className = 'msg';
 }());
 function appendView() {
@@ -118,12 +118,12 @@ function solver() {
 		}
 	}
 	//Check whether puzzle is valid
-	if (checkPzlValid()==false) {
+	if (checkPzlValid() === false) {
 		divMsg.innerHTML='Puzzle setup is invalid: '+strInvalidPzlReadout;
 		return;
 	}	
 	//Check whether puzzle is complete
-	if (checkPzlComplete()==true) {
+	if (checkPzlComplete() === true) {
 		divMsg.innerHTML='Puzzle complete!';
 		return;
 	}
@@ -135,12 +135,12 @@ function solver() {
 		complexOutput();
 		//if bruteForce has been engaged check pzl is valid and if not must go back through memory chain
 		if (intBrute>0) {
-			if (checkPzlValid()==false) {
+			if (checkPzlValid() === false) {
 				remember();
 			}
 		}
-		if (booChange==false) {
-			if (checkPzlValid()==true && checkPzlComplete()==true) {
+		if (booChange === false) {
+			if (checkPzlValid() === true && checkPzlComplete() === true) {
 				divMsg.innerHTML='Puzzle complete!';
 				return;
 			}
@@ -154,7 +154,7 @@ function checkPzlComplete() {
 		var e=document.getElementById(i);
 		var v=e.options[e.selectedIndex].value;
 		//if cell is blank return false
-		if(v=="") {
+		if(v === "") {
 			return false;
 		}
 	}
@@ -163,22 +163,25 @@ function checkPzlComplete() {
 }
 function checkPzlValid() {
 	updateArray();
-	//declare local variable
+
+	var ee;
 	var xx=0;
+	var vv;
+	
 	var booNoValues=false;
 	for (i=0; i<=80; i++) {
 		//get cell value
 		var e=document.getElementById(i);
 		var v=e.options[e.selectedIndex].value;
 		//if cell is not blank then check there are no duplicates
-		if(v!="") {
+		if(v !== "") {
 			//check same value not in same row
 			//get row (r) from i
 			r=getRow(i);
 			//check row
 			for (x=r*9-9; x<r*9; x++) {
-				var ee=document.getElementById(x);
-				var vv=ee.options[ee.selectedIndex].value;
+				ee = document.getElementById(x);
+				vv = ee.options[ee.selectedIndex].value;
 				if (v==vv && i!=x) {
 					strInvalidPzlReadout=('cell id: '+i+', duplicate in row: '+r);
 					return false;
@@ -190,12 +193,12 @@ function checkPzlValid() {
 			for (x=1; x<=9; x++) {
 				if (c==9) {
 					xx=9*x-1;
-					var ee=document.getElementById(xx);
-					var vv=ee.options[ee.selectedIndex].value;
+					ee = document.getElementById(xx);
+					vv=ee.options[ee.selectedIndex].value;
 				} else {
 					xx=c+9*x-10;
-					var ee=document.getElementById(xx);
-					var vv=ee.options[ee.selectedIndex].value;
+					ee = document.getElementById(xx);
+					vv = ee.options[ee.selectedIndex].value;
 				}
 				if (v==vv && i!=xx) {
 					strInvalidPzlReadout=('cell id: '+i+', duplicate in column: '+c);
@@ -208,8 +211,8 @@ function checkPzlValid() {
 			for (rr=rrfun; rr<=rrfun+2; rr++) {
 				for (cc=ccfun; cc<=ccfun+2; cc++) {
 					x=cc+(rr-1)*9-1;
-					var ee=document.getElementById(x);
-					var vv=ee.options[ee.selectedIndex].value;
+					ee = document.getElementById(x);
+					vv = ee.options[ee.selectedIndex].value;
 					if (v==vv && i!=x) {
 						strInvalidPzlReadout=('cell id: '+i+', duplicate in child square row: '+rr+' & child square column: '+cc);
 						return false;
@@ -220,12 +223,12 @@ function checkPzlValid() {
 			//If cell is blank then check it has possible values
 			booNoValues=true;
 			for (z=0; z<=8; z++) {
-				if (arr[i][z]==true) {
+				if (arr[i][z] === true) {
 					booNoValues=false;
 					break;
 				}
 			}
-			if (booNoValues==true) {
+			if (booNoValues === true) {
 				strInvalidPzlReadout=('cell id: '+i+', no possible values');
 				return false;
 			}
@@ -247,7 +250,7 @@ function updateArray() {
 		//get cell value
 		var e = document.getElementById(i);
 		var v = e.options[e.selectedIndex].value;
-		if(v!="") {
+		if(v !== "") {
 			//get row (r) from i
 			r=getRow(i);
 			//get column (c) from i
@@ -288,14 +291,14 @@ function simpleOutput() {
 		//check if cell has a value
 		var e=document.getElementById(i);
 		var v=e.options[e.selectedIndex].value;
-		if(v=="") {
+		if(v === "") {
 			//loop through all values for current cell
 			looper=0;
 			for (j=1; j<=9; j++) {
 				if (looper==2) {
 					break;
 				}
-				if(arr[i][j-1]==true) {
+				if(arr[i][j-1] === true) {
 					looper=looper+1;
 					z=j;
 				}
@@ -318,7 +321,7 @@ function complexOutput() {
 		for (z=1; z<=9; z++) {
 			count=0;
 			for (y=1; y<=9; y++) {
-				if (arr[y+(x)*9-10][z-1]==true) {
+				if (arr[y+(x)*9-10][z-1] === true) {
 					count=count+1;
 					if (count==2) {
 						break;
@@ -339,7 +342,7 @@ function complexOutput() {
 		for (z=0; z<=8; z++) {
 			count=0;
 			for (x=1; x<=9; x++) {
-				if (arr[y+(x)*9-10][z]==true) {
+				if (arr[y+(x)*9-10][z] === true) {
 					count=count+1;
 					if (count==2) {
 						break;
@@ -364,9 +367,9 @@ function complexOutput() {
 				count=0;
 				for (x=a-2; x<=a; x++) {
 					for (y=b-2; y<=b; y++) {
-						if (arr[y+(x)*9-10][z-1]==true) {
+						if (arr[y+(x)*9-10][z-1] === true) {
 							count=count+1;
-							if (count==2) {
+							if (count === 2) {
 								break;
 							}
 							solx=x;
@@ -374,7 +377,7 @@ function complexOutput() {
 							solz=z;
 						}
 					}
-					if (count==2) {
+					if (count === 2) {
 						break;
 					}
 				}
@@ -403,7 +406,7 @@ function bruteForce() {
 	for (i=0; i<=80; i++) {
 		count=0;
 		for (z=0; z<=8; z++) {
-			if (arr[i][z]==true) {
+			if (arr[i][z] === true) {
 				count=count+1;
 				if (count>=metaCount) {
 					break;
@@ -418,7 +421,7 @@ function bruteForce() {
 	}
 	//Group all possible options for chosen cell in array arrPossValues
 	for (z=0; z<=8; z++) {
-		if (arr[arrGuessCell[intBrute]][z]==true) {
+		if (arr[arrGuessCell[intBrute]][z] === true) {
 			arrPossValues[intBrute].push(z+1);
 		}
 	}
@@ -442,7 +445,7 @@ function remember() {
 		document.getElementById(i).value=arrMemory[intBrute][i];
 	}
 	//check if any unused guesses, if so then choose one of them
-	if(arrPossValues[intBrute].length==0) {
+	if(arrPossValues[intBrute].length === 0) {
 		//all options at this branch have been exhausted
 		//obliterate the memory arrays for this intBrute
 		arrMemory.splice(intBrute,1);
@@ -470,7 +473,7 @@ function getRow(ii) {
 	return Math.ceil((ii+1)/9);
 }
 function getColumn(ii) {
-	if ((ii+1)/9-Math.floor((ii+1)/9)==0) {
+	if ((ii + 1) / 9 - Math.floor((ii + 1) / 9) === 0) {
 		return 9;
 	} else {
 		return Math.round((ii+1)-9*Math.floor((ii+1)/9));
