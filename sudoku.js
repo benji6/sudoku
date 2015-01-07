@@ -55,8 +55,8 @@ var infanticide = function(node) {
 		node.removeChild(node.firstChild);
 	}
 };
-var iterate = function(fn) {
-	return function(num) {
+var iterate = function(num) {
+	return function(fn) {
 		var i = 0;
 		while (i++ < num) {
 			fn(i);
@@ -71,45 +71,49 @@ var createOption = function(parent) {
 	};
 };
 
+var createElement = function(tag) {
+	return document.createElement(tag);
+};
+var appendChild = function(child) {
+	return function(parent) {
+		return parent.appendChild(child);
+	};
+};
+var createAndAppendChild = function(tag, parent) {
+	return appendChild(createElement(tag))(parent);
+};
+var setId = function(elem, id) {
+	elem.id = id;
+	return elem;
+};
+
 function newPuzzle() {
 	infanticide(divMsg);
 	infanticide(divPzl);
-	var table = document.createElement('table');
-	var tr;
-	var tr2;
-	var td;
-	var td2;
-	var table2;
-	var select;
-	var html='';
-	var v=0;
-	var w=0;
-	var x=0;
-	var y=0;
-	var k=0;
-	var solx=0;
-	var soly=0;
-	var solz=0;
-	var createOptions;
-	for (v = 1; v <= 3; v++) {
-		tr = table.appendChild(document.createElement('tr'));
-		for (w=1; w<=3; w++) {
-			td = tr.appendChild(document.createElement('td'));
-			table2 = td.appendChild(document.createElement('table'));
-			for (x=1; x<=3; x++) {
-				tr2 = table2.appendChild(document.createElement('tr'));
-				for (y=1; y<=3; y++) {
-					k=(v*3+x)*9+w*3+y-40;
-					td2 = tr2.appendChild(document.createElement('td'));
-					select = td2.appendChild(document.createElement('select'));
-					select.id = k;
-					createOption(select)('');
-					createOptions = iterate(createOption(select));
-					createOptions(9);
-				}
-			}
-		}
-	}
+	var iterate3 = iterate(3);
+	var iterate9 = iterate(9);
+	var table = createElement('table');
+	var l1 = function(v) {
+			var tr = createAndAppendChild('tr', table);
+			var l2 = function(w) {
+				var td = createAndAppendChild('td', tr);
+				var table2 = createAndAppendChild('table', td);
+				var l3 = function(x) {
+					var tr2 = createAndAppendChild('tr', table2);
+					var l4 = function(y) {
+						var k=(v*3+x)*9+w*3+y-40;
+						var td2 = createAndAppendChild('td', tr2);
+						var select = setId(createAndAppendChild('select', td2), k);
+						createOption(select)('');
+						iterate9(createOption(select));
+					};
+					iterate3(l4);
+				};
+				iterate3(l3);
+			};
+			iterate3(l2);
+	};
+	iterate3(l1);
 	divPzl.appendChild(table);
 }
 function solver() {
