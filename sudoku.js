@@ -31,7 +31,7 @@ var divMsg;
 	var addH2 = addViewToVH('h2');
 	var addButton = addViewToVH('button');
 	var addDiv = addViewToVH('div');
-	
+
 	addH2('Sudoku Solver');
 	btnNewPzl = addButton('New Puzzle');
 	btnSolve = addButton('Solve!');
@@ -50,8 +50,25 @@ function appendView() {
 	document.body.appendChild(viewHolder);
 }
 
+var infanticide = function(node) {
+	while (node.firstChild) {
+		node.removeChild(node.firstChild);
+	}
+};
+
 function newPuzzle() {
-	var html='<table>';
+	infanticide(divMsg);
+	infanticide(divPzl);
+	var table = document.createElement('table');
+	var tr;
+	var tr2;
+	var td;
+	var td2;
+	var table2;
+	var select;
+	var option;
+
+	var html='';
 	var v=0;
 	var w=0;
 	var x=0;
@@ -61,28 +78,30 @@ function newPuzzle() {
 	var solx=0;
 	var soly=0;
 	var solz=0;
-	for (v=1; v<=3; v++) {
-		html=html+'<tr>';
+	for (v = 1; v <= 3; v++) {
+		tr = table.appendChild(document.createElement('tr'));
 		for (w=1; w<=3; w++) {
-			html=html+'<td><table>';
+			td = tr.appendChild(document.createElement('td'));
+			table2 = td.appendChild(document.createElement('table'));
 			for (x=1; x<=3; x++) {
-				html=html+'<tr>';
+				tr2 = table2.appendChild(document.createElement('tr'));
 				for (y=1; y<=3; y++) {
 					k=(v*3+x)*9+w*3+y-40;
-					html=html+'<td><select id='+k+'><option value=""></option>';
-					for (z=1; z<=9; z++) {
-						html=html+'<option value='+z+'>'+z+'</option>';
+					td2 = tr2.appendChild(document.createElement('td'));
+					select = td2.appendChild(document.createElement('select'));
+					select.id = k;
+					option = select.appendChild(document.createElement('option'));
+					option.value = '';
+						for (z=1; z<=9; z++) {
+							option = select.appendChild(document.createElement('option'));
+							option.value = z;
+							option.appendChild(document.createTextNode(z));
 					}
-					html=html+'</select></td>';
 				}
 			}
-			html=html+'</table></td>';
 		}
-		html=html+'</tr>';
 	}
-	html=html+'</table>';
-	divPzl.innerHTML = html;
-	divMsg.innerHTML='';
+	divPzl.appendChild(table);
 }
 function solver() {
 	//declare local variables
@@ -121,7 +140,7 @@ function solver() {
 	if (checkPzlValid() === false) {
 		divMsg.innerHTML='Puzzle setup is invalid: '+strInvalidPzlReadout;
 		return;
-	}	
+	}
 	//Check whether puzzle is complete
 	if (checkPzlComplete() === true) {
 		divMsg.innerHTML='Puzzle complete!';
@@ -167,7 +186,7 @@ function checkPzlValid() {
 	var ee;
 	var xx=0;
 	var vv;
-	
+
 	var booNoValues=false;
 	for (i=0; i<=80; i++) {
 		//get cell value
@@ -205,9 +224,9 @@ function checkPzlValid() {
 					return false;
 				}
 			}
-			//check child square		
+			//check child square
 			rrfun=Math.floor((r+2)/3)*3-2;
-			ccfun=Math.floor((c+2)/3)*3-2;			
+			ccfun=Math.floor((c+2)/3)*3-2;
 			for (rr=rrfun; rr<=rrfun+2; rr++) {
 				for (cc=ccfun; cc<=ccfun+2; cc++) {
 					x=cc+(rr-1)*9-1;
@@ -256,11 +275,11 @@ function updateArray() {
 			//get column (c) from i
 			c=getColumn(i);
 			//update for completed cell
-			for (j=0; j<=8; j++) {		
+			for (j=0; j<=8; j++) {
 				arr[i][j]=false;
 			}
 			//update array for row cells affected
-			for (x=r*9-9; x<r*9; x++) {		
+			for (x=r*9-9; x<r*9; x++) {
 				arr[x][v-1]=false;
 			}
 			//update array for column cells affected
@@ -273,7 +292,7 @@ function updateArray() {
 			}
 			//update array for square cells affected
 			rrfun=Math.floor((r+2)/3)*3-2;
-			ccfun=Math.floor((c+2)/3)*3-2;			
+			ccfun=Math.floor((c+2)/3)*3-2;
 			for (rr=rrfun; rr<=rrfun+2; rr++) {
 				for (cc=ccfun; cc<=ccfun+2; cc++) {
 					arr[cc+(rr-1)*9-1][v-1]=false;
@@ -386,7 +405,7 @@ function complexOutput() {
 					booChange=true;
 				}
 			}
-		}		
+		}
 	}
 }
 function bruteForce() {
