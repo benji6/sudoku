@@ -55,6 +55,21 @@ var infanticide = function(node) {
 		node.removeChild(node.firstChild);
 	}
 };
+var iterate = function(fn) {
+	return function(num) {
+		var i = 0;
+		while (i++ < num) {
+			fn(i);
+		}
+	};
+};
+var createOption = function(parent) {
+	return function(i) {
+		option = parent.appendChild(document.createElement('option'));
+		option.value = i;
+		option.appendChild(document.createTextNode(i));
+	};
+};
 
 function newPuzzle() {
 	infanticide(divMsg);
@@ -66,18 +81,16 @@ function newPuzzle() {
 	var td2;
 	var table2;
 	var select;
-	var option;
-
 	var html='';
 	var v=0;
 	var w=0;
 	var x=0;
 	var y=0;
-	var z=0;
 	var k=0;
 	var solx=0;
 	var soly=0;
 	var solz=0;
+	var createOptions;
 	for (v = 1; v <= 3; v++) {
 		tr = table.appendChild(document.createElement('tr'));
 		for (w=1; w<=3; w++) {
@@ -90,13 +103,9 @@ function newPuzzle() {
 					td2 = tr2.appendChild(document.createElement('td'));
 					select = td2.appendChild(document.createElement('select'));
 					select.id = k;
-					option = select.appendChild(document.createElement('option'));
-					option.value = '';
-						for (z=1; z<=9; z++) {
-							option = select.appendChild(document.createElement('option'));
-							option.value = z;
-							option.appendChild(document.createTextNode(z));
-					}
+					createOption(select)('');
+					createOptions = iterate(createOption(select));
+					createOptions(9);
 				}
 			}
 		}
