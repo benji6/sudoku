@@ -1,14 +1,26 @@
 var sudoku = (function() {
 
-var iterate = function(num) {
-	return function(fn) {
-		var i = 0;
-		while (i++ < num) {
-			fn(i);
-		}
+
+var iterateFrom = function(fr) {
+	return function(to) {
+		return function(fn) {
+			var from = fr;
+			while (from <= to) {
+				fn(from++);
+			}
+		};
 	};
 };
-iterate(5)(function(i){console.log(i);});
+
+
+var iterateFrom1 = iterateFrom(1);
+
+
+var iterateFrom0 = iterateFrom(0);
+iterateFrom0(5)(function(i){console.log(i);});
+iterateFrom0(2)(function(i){console.log(i);});
+
+
 var compose = function() {
 	var fns = arguments;
 	return function (x) {
@@ -102,8 +114,8 @@ var setId = function(elem, id) {
 function newPuzzle() {
 	infanticide(divMsg);
 	infanticide(divPzl);
-	var iterate3 = iterate(3);
-	var iterate9 = iterate(9);
+	var iterate3 = iterateFrom1(3);
+	var iterate9 = iterateFrom1(9);
 	var table = createElement('table');
 	var l1 = function(v) {
 			var tr = createAndAppendChild('tr', table);
