@@ -25,6 +25,13 @@ var compose = function() {
 	};
 };
 
+var wrap = function(parent) {
+	return function(fn) {
+		return fn(parent);
+	};
+};
+
+//dom manipulation
 var createElement = function(tag) {
 	return document.createElement(tag);
 };
@@ -43,32 +50,24 @@ var createAndAppendTextNode = function(txt, parent) {
 	return appendChild(createTextNode(txt))(parent);
 };
 var setAttribute = function(el, name, val) {
-	return el.setAttribute(name, val);
-};
-
-var wrap = function(parent) {
-	return function(fn) {
-		return fn(parent);
-	};
+	el.setAttribute(name, val);
+	return el;
 };
 
 var viewHolder = createElement('div');
 
-var attachToViewHolder = wrap(viewHolder);
+var createAndAttachToViewHolder = compose(
+	createElement,
+	appendChild,
+	wrap(viewHolder)
+);
 
-attachToViewHolder(appendChild(createElement('h2'))).innerHTML = 'SMOTHER2';
+createAndAppendTextNode('Sudoku Solver', createAndAttachToViewHolder('h2'));
+var btnNewPzl = createAndAttachToViewHolder('button');
+var btnSolve = createAndAttachToViewHolder('button');
+var divPzl = createAndAttachToViewHolder('div');
+var divMsg = setAttribute(createAndAttachToViewHolder('div'), "class", 'msg');
 
-createAndAppendTextNode('SMOTHER2',
-	compose(createElement, appendChild, attachToViewHolder)('h2'));
-
-var h2 = createAndAppendChild('h2', viewHolder);
-var btnNewPzl = createAndAppendChild('button', viewHolder);
-var btnSolve = createAndAppendChild('button', viewHolder);
-var divPzl = createAndAppendChild('div', viewHolder);
-var divMsg = createAndAppendChild('div', viewHolder);
-setAttribute(divMsg, "class", 'msg');
-
-createAndAppendTextNode('Sudoku Solver', h2);
 createAndAppendTextNode('New Puzzle', btnNewPzl);
 createAndAppendTextNode('Solve!', btnSolve);
 
@@ -77,10 +76,6 @@ btnNewPzl.onfocus = function() {
 };
 btnSolve.onfocus = function() {
 	this.blur && this.blur();
-};
-
-var appendView = function() {
-	appendChild(viewHolder)(document.body);
 };
 
 var infanticide = function(node) {
@@ -532,7 +527,7 @@ btnSolve.onclick = solver;
 
 function on() {
 	newPuzzle();
-	appendView();
+	appendChild(viewHolder)(document.body);
 }
 function off() {
 	viewHolder.parentNode && viewHolder.parentNode.removeChild(viewHolder);
