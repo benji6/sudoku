@@ -1,40 +1,9 @@
-var domManipulation = require('./domManipulation.js');
+require('./domManipulation.js')(window);
+require('./spiceRack.js')(window);
 
-domManipulation(window);
-
-
-var iterateFrom = function(fr) {
-	return function(count) {
-		return function(fn) {
-			var from = fr;
-			var to = count + fr;
-			while (from < to) {
-				fn(from++);
-			}
-		};
-	};
-};
 
 var iterateFrom1 = iterateFrom(1);
 var iterateFrom0 = iterateFrom(0);
-
-var compose = function() {
-	var fns = arguments;
-	return function (x) {
-		iterateFrom0(fns.length)(function(i) {
-			x = fns[i].call(this, x);
-		});
-		return x;
-	};
-};
-
-var wrap = function(parent) {
-	return function(fn) {
-		return fn(parent);
-	};
-};
-
-
 
 var viewHolder = createElement('div');
 
