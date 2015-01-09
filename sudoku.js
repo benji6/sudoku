@@ -1,54 +1,48 @@
 var sudoku = (function() {
 
 //create text view
-var viewHolder = document.createElement('div');
-var btnNewPzl;
-var btnSolve;
-var divPzl;
-var divMsg;
 
-(function() {
-	var curry = function(func) {
-		var curried = function(args) {
-			if (args.length >= func.length) {
-				return func.apply(null, args);
-			}
-			return function() {
-				return curried(args.concat(Array.prototype.slice.apply(arguments)));
-			};
-		};
-		return curried(Array.prototype.slice.apply(arguments, [1]));
-	};
-	var addView = function(parentEl, childEl, txtNode) {
-		var childElement = document.createElement(childEl);
-		childElement.appendChild(document.createTextNode(txtNode));
-		parentEl.appendChild(childElement);
-		return childElement;
-	};
-	var curryAddView = curry(addView);
-	var addViewToVH = curryAddView(viewHolder);
 
-	var addH2 = addViewToVH('h2');
-	var addButton = addViewToVH('button');
-	var addDiv = addViewToVH('div');
-
-	addH2('Sudoku Solver');
-	btnNewPzl = addButton('New Puzzle');
-	btnSolve = addButton('Solve!');
-	divPzl = addDiv('');
-	divMsg = addDiv('');
-
-	btnNewPzl.onfocus = function() {
-		this.blur && this.blur();
+var createElement = function(tag) {
+	return document.createElement(tag);
+};
+var createTextNode = function(txt) {
+	return document.createTextNode(txt);
+};
+var appendChild = function(child) {
+	return function(parent) {
+		return parent.appendChild(child);
 	};
-	btnSolve.onfocus = function() {
-		this.blur && this.blur();
-	};
-	divMsg.className = 'msg';
-}());
-function appendView() {
+};
+var createAndAppendChild = function(tag, parent) {
+	return appendChild(createElement(tag))(parent);
+};
+var createAndAppendTextNode = function(txt, parent) {
+	return appendChild(createTextNode(txt))(parent);
+};
+
+var viewHolder = createElement('div');
+var h2 = createAndAppendChild('h2', viewHolder);
+var btnNewPzl = createAndAppendChild('button', viewHolder);
+var btnSolve = createAndAppendChild('button', viewHolder);
+var divPzl = createAndAppendChild('div', viewHolder);
+var divMsg = createAndAppendChild('div', viewHolder);
+
+createAndAppendTextNode('Sudoku Solver', h2);
+createAndAppendTextNode('New Puzzle', btnNewPzl);
+createAndAppendTextNode('Solve!', btnSolve);
+
+btnNewPzl.onfocus = function() {
+	this.blur && this.blur();
+};
+btnSolve.onfocus = function() {
+	this.blur && this.blur();
+};
+divMsg.className = 'msg';
+
+var appendView = function () {
 	document.body.appendChild(viewHolder);
-}
+};
 
 var infanticide = function(node) {
 	while (node.firstChild) {
@@ -71,17 +65,6 @@ var createOption = function(parent) {
 	};
 };
 
-var createElement = function(tag) {
-	return document.createElement(tag);
-};
-var appendChild = function(child) {
-	return function(parent) {
-		return parent.appendChild(child);
-	};
-};
-var createAndAppendChild = function(tag, parent) {
-	return appendChild(createElement(tag))(parent);
-};
 var setId = function(elem, id) {
 	elem.id = id;
 	return elem;
