@@ -1,8 +1,5 @@
 var sudoku = (function() {
 
-//create text view
-
-
 var createElement = function(tag) {
 	return document.createElement(tag);
 };
@@ -20,13 +17,16 @@ var createAndAppendChild = function(tag, parent) {
 var createAndAppendTextNode = function(txt, parent) {
 	return appendChild(createTextNode(txt))(parent);
 };
-
+var setAttribute = function(el, name, val) {
+	return el.setAttribute(name, val);
+};
 var viewHolder = createElement('div');
 var h2 = createAndAppendChild('h2', viewHolder);
 var btnNewPzl = createAndAppendChild('button', viewHolder);
 var btnSolve = createAndAppendChild('button', viewHolder);
 var divPzl = createAndAppendChild('div', viewHolder);
 var divMsg = createAndAppendChild('div', viewHolder);
+setAttribute(divMsg, "class", 'msg');
 
 createAndAppendTextNode('Sudoku Solver', h2);
 createAndAppendTextNode('New Puzzle', btnNewPzl);
@@ -38,10 +38,9 @@ btnNewPzl.onfocus = function() {
 btnSolve.onfocus = function() {
 	this.blur && this.blur();
 };
-divMsg.className = 'msg';
 
-var appendView = function () {
-	document.body.appendChild(viewHolder);
+var appendView = function() {
+	appendChild(viewHolder)(document.body);
 };
 
 var infanticide = function(node) {
