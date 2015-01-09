@@ -1,5 +1,3 @@
-var sudoku = (function() {
-
 var iterateFrom = function(fr) {
 	return function(count) {
 		return function(fn) {
@@ -528,9 +526,8 @@ function off() {
 	viewHolder.parentNode && viewHolder.parentNode.removeChild(viewHolder);
 }
 
-return {
+window.sudoku = {
 	on: on,
 	off: off
 };
-}());
-sudoku.on();
+window.sudoku.on();
