@@ -1,5 +1,25 @@
 var sudoku = (function() {
 
+var iterate = function(num) {
+	return function(fn) {
+		var i = 0;
+		while (i++ < num) {
+			fn(i);
+		}
+	};
+};
+iterate(5)(function(i){console.log(i);});
+var compose = function() {
+	var fns = arguments;
+	return function (x) {
+		var num = fns.length;
+		while (num--) {
+			x = fns[num].call(this, x);
+		}
+		return x;
+	};
+};
+
 var createElement = function(tag) {
 	return document.createElement(tag);
 };
@@ -20,7 +40,24 @@ var createAndAppendTextNode = function(txt, parent) {
 var setAttribute = function(el, name, val) {
 	return el.setAttribute(name, val);
 };
+
+var wrap = function(parent) {
+	return function(fn) {
+		return fn(parent);
+	};
+};
+
 var viewHolder = createElement('div');
+
+var attachToViewHolder = wrap(viewHolder);
+
+attachToViewHolder(appendChild(createElement('h2'))).innerHTML = 'SMOTHER2';
+
+var one = function(x) {return x + 5;};
+var two = function(x) {return x + 3;};
+
+console.log(compose(one, two)(1));
+
 var h2 = createAndAppendChild('h2', viewHolder);
 var btnNewPzl = createAndAppendChild('button', viewHolder);
 var btnSolve = createAndAppendChild('button', viewHolder);
@@ -48,14 +85,7 @@ var infanticide = function(node) {
 		node.removeChild(node.firstChild);
 	}
 };
-var iterate = function(num) {
-	return function(fn) {
-		var i = 0;
-		while (i++ < num) {
-			fn(i);
-		}
-	};
-};
+
 var createOption = function(parent) {
 	return function(i) {
 		option = parent.appendChild(document.createElement('option'));
