@@ -29,12 +29,6 @@ btnSolve.onfocus = function() {
 	this.blur && this.blur();
 };
 
-var infanticide = function(node) {
-	while (node.firstChild) {
-		node.removeChild(node.firstChild);
-	}
-};
-
 var createOption = function(parent) {
 	return function(i) {
 		option = parent.appendChild(document.createElement('option'));

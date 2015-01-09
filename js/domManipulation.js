@@ -19,7 +19,11 @@ var setAttribute = function(el, name, val) {
   el.setAttribute(name, val);
   return el;
 };
-
+var infanticide = function(node) {
+  while (node.firstChild) {
+    node.removeChild(node.firstChild);
+  }
+};
 
 module.exports = function(obj) {
   obj.createElement = createElement;
@@ -28,4 +32,5 @@ module.exports = function(obj) {
   obj.createAndAppendChild = createAndAppendChild;
   obj.createAndAppendTextNode = createAndAppendTextNode;
   obj.setAttribute = setAttribute;
+  obj.infanticide = infanticide;
 };
