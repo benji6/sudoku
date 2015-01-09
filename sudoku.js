@@ -58,10 +58,8 @@ var attachToViewHolder = wrap(viewHolder);
 
 attachToViewHolder(appendChild(createElement('h2'))).innerHTML = 'SMOTHER2';
 
-var one = function(x) {return x + 5;};
-var two = function(x) {return x + 3;};
-
-console.log(compose(one, two)(1));
+createAndAppendTextNode('SMOTHER2',
+	compose(createElement, appendChild, attachToViewHolder)('h2'));
 
 var h2 = createAndAppendChild('h2', viewHolder);
 var btnNewPzl = createAndAppendChild('button', viewHolder);
