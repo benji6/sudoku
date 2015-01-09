@@ -1,33 +1,26 @@
 var sudoku = (function() {
 
-
 var iterateFrom = function(fr) {
-	return function(to) {
+	return function(count) {
 		return function(fn) {
 			var from = fr;
-			while (from <= to) {
+			var to = count + fr;
+			while (from < to) {
 				fn(from++);
 			}
 		};
 	};
 };
 
-
 var iterateFrom1 = iterateFrom(1);
-
-
 var iterateFrom0 = iterateFrom(0);
-iterateFrom0(5)(function(i){console.log(i);});
-iterateFrom0(2)(function(i){console.log(i);});
-
 
 var compose = function() {
 	var fns = arguments;
 	return function (x) {
-		var num = fns.length;
-		while (num--) {
-			x = fns[num].call(this, x);
-		}
+		iterateFrom0(fns.length)(function(i) {
+			x = fns[i].call(this, x);
+		});
 		return x;
 	};
 };
