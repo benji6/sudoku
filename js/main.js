@@ -72,41 +72,54 @@ function newPuzzle() {
 	var iterate3 = iterateFrom1(3);
 	var iterate9 = iterateFrom1(9);
 
-	var jsmlTr = [
-	{
+
+	var jsmlTable0 = {
+			"tag": "table",
+			"callback": function(el) {
+				jsmlParse(jsmlTr0, el);
+			}
+		};
+	var jsmlTr0 = {
 		"tag": "tr",
 		"count": "3",
 		"callback": function(el, parentNode, count) {
 			el.id = count.toString();
-			jsmlParse(jsmlTd, el);
+			jsmlParse(jsmlTd0, el);
 		}
-	}
-	];
-	var jsmlTd = [
-	{
+	};
+	var jsmlTd0 = {
+		"tag": "td",
+		"count": "3",
+		"text": "hello",
+		"callback": function(el, parentNode, count) {
+			this.text = (parseInt(parentNode.id) * this.count + count).toString();
+			jsmlParse(jsmlTable1, el);
+		}
+	};
+	var jsmlTable1 = {
+		"tag": "table",
+		"callback": function(el) {
+			jsmlParse(jsmlTr1, el);
+		}
+	};
+	var jsmlTr1 = {
+		"tag": "tr",
+		"count": "3",
+		"callback": function(el, parentNode, count) {
+			el.id = count.toString();
+			jsmlParse(jsmlTd1, el);
+		}
+	};
+	var jsmlTd1 = {
 		"tag": "td",
 		"count": "3",
 		"text": "hello",
 		"callback": function(el, parentNode, count) {
 			this.text = (parseInt(parentNode.id) * this.count + count).toString();
 		}
-	}
-	];
+	};
 
-	var jsml1 = [
-		{
-			"tag": "table",
-			"callback": function(el) {
-				jsmlParse(jsmlTr, el);
-			}
-		}
-	];
-
-
-
-	jsmlParse(jsml1, divPzl);
-
-
+	jsmlParse(jsmlTable0, divPzl);
 
 
 	var table = createElement('table');
