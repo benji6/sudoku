@@ -72,14 +72,33 @@ function newPuzzle() {
 	var iterate3 = iterateFrom1(3);
 	var iterate9 = iterateFrom1(9);
 
+	var jsmlTr = [
+	{
+		"tag": "tr",
+		"count": "3",
+		"callback": function(el, parentNode, count) {
+			el.id = count.toString();
+			jsmlParse(jsmlTd, el);
+		}
+	}
+	];
+	var jsmlTd = [
+	{
+		"tag": "td",
+		"count": "3",
+		"text": "hello",
+		"callback": function(el, parentNode, count) {
+			this.text = (parseInt(parentNode.id) * this.count + count).toString();
+		}
+	}
+	];
+
 	var jsml1 = [
 		{
 			"tag": "table",
-			"children": [
-				{
-					"tag": "tr"
-				}
-			]
+			"callback": function(el) {
+				jsmlParse(jsmlTr, el);
+			}
 		}
 	];
 
