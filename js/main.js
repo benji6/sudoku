@@ -1,6 +1,6 @@
 require('./domManipulation.js')(window);
 	require('./spiceRack.js')(window);
-var jsmlParser = require('./jsmlParser.js');
+var jsmlParse = require('./jsmlParse.js');
 
 var btnNewPzl;
 var btnSolve;
@@ -55,7 +55,7 @@ var jsml0 = [
 	}
 ];
 
-jsmlParser(jsml0, document.body);
+jsmlParse(jsml0, document.body);
 
 var createOption = function(parent) {
 	return function(i) {
@@ -85,7 +85,7 @@ function newPuzzle() {
 
 
 
-	jsmlParser(jsml1, divPzl);
+	jsmlParse(jsml1, divPzl);
 
 
 

@@ -118,25 +118,36 @@ var jsmlWalker = function arrayWalker(fn) {
     };
 };
 
-var jsmlWalkerCallback = function(parentNode, callback) {
-    return function(el) {
-        var domEl = createElement(el.tag);
-        callback && callback(domEl);
-        el.callback && el.callback(domEl);
-        el.text && appendChild(createTextNode(el.text))(domEl);
-        el.className && setClassName(domEl, el.className);
-        appendChild(domEl)(parentNode);
+var jsmlWalkerCallback = function(parentNode) {
+    return function(forEachCallback) {
+        return function recurse(el, recurseCount) {
+            if (!recurseCount) {
+                recurseCount = 0;
+            }
+            var domEl = createElement(el.tag);
+            forEachCallback && calforEachCallbacklback(domEl, parentNode, recurseCount);
+            el.callback && el.callback(domEl, parentNode, recurseCount);
+            el.text && appendChild(createTextNode(el.text))(domEl);
+            el.className && setClassName(domEl, el.className);
+            appendChild(domEl)(parentNode);
+            if (el.count) {
+                if (++recurseCount < parseInt(el.count)) {
+                    recurse(el, recurseCount);
+                }
+            }
+        };
     };
 };
 
-module.exports = function(jsml, parentNode, callback) {
-    jsmlWalker(jsmlWalkerCallback(parentNode, callback))(jsml);
+jsmlParser = function(jsml, parentNode, callback) {
+    jsmlWalker(jsmlWalkerCallback(parentNode)(callback))(jsml);
 };
+module.exports = jsmlParser;
 
 },{}],3:[function(require,module,exports){
 require('./domManipulation.js')(window);
 	require('./spiceRack.js')(window);
-var jsmlParser = require('./jsmlParser.js');
+var jsmlParse = require('./jsmlParse.js');
 
 var btnNewPzl;
 var btnSolve;
@@ -191,7 +202,7 @@ var jsml0 = [
 	}
 ];
 
-jsmlParser(jsml0, document.body);
+jsmlParse(jsml0, document.body);
 
 var createOption = function(parent) {
 	return function(i) {
@@ -221,7 +232,7 @@ function newPuzzle() {
 
 
 
-	jsmlParser(jsml1, divPzl);
+	jsmlParse(jsml1, divPzl);
 
 
 
@@ -663,7 +674,7 @@ window.sudoku = {
 };
 window.sudoku.on();
 
-},{"./domManipulation.js":1,"./jsmlParser.js":2,"./spiceRack.js":4}],4:[function(require,module,exports){
+},{"./domManipulation.js":1,"./jsmlParse.js":2,"./spiceRack.js":4}],4:[function(require,module,exports){
 var iterateFrom = function(fr) {
   return function(count) {
     return function(fn) {

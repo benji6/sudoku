@@ -79,17 +79,28 @@ var jsmlWalker = function arrayWalker(fn) {
     };
 };
 
-var jsmlWalkerCallback = function(parentNode, callback) {
-    return function(el) {
-        var domEl = createElement(el.tag);
-        callback && callback(domEl);
-        el.callback && el.callback(domEl);
-        el.text && appendChild(createTextNode(el.text))(domEl);
-        el.className && setClassName(domEl, el.className);
-        appendChild(domEl)(parentNode);
+var jsmlWalkerCallback = function(parentNode) {
+    return function(forEachCallback) {
+        return function recurse(el, recurseCount) {
+            if (!recurseCount) {
+                recurseCount = 0;
+            }
+            var domEl = createElement(el.tag);
+            forEachCallback && calforEachCallbacklback(domEl, parentNode, recurseCount);
+            el.callback && el.callback(domEl, parentNode, recurseCount);
+            el.text && appendChild(createTextNode(el.text))(domEl);
+            el.className && setClassName(domEl, el.className);
+            appendChild(domEl)(parentNode);
+            if (el.count) {
+                if (++recurseCount < parseInt(el.count)) {
+                    recurse(el, recurseCount);
+                }
+            }
+        };
     };
 };
 
-module.exports = function(jsml, parentNode, callback) {
-    jsmlWalker(jsmlWalkerCallback(parentNode, callback))(jsml);
+jsmlParser = function(jsml, parentNode, callback) {
+    jsmlWalker(jsmlWalkerCallback(parentNode)(callback))(jsml);
 };
+module.exports = jsmlParser;
