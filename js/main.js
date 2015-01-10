@@ -1,33 +1,61 @@
 require('./domManipulation.js')(window);
-require('./spiceRack.js')(window);
+	require('./spiceRack.js')(window);
+var jsmlParser = require('./jsmlParser.js');
 
+var btnNewPzl;
+var btnSolve;
+var divPzl;
+var divMsg;
+var viewHolder;
 
-var iterateFrom1 = iterateFrom(1);
-var iterateFrom0 = iterateFrom(0);
+var jsml0 = [
+	{
+		"tag": "div",
+		"callback": function(el) {
+			viewHolder = el;
+		},
+		"children": [
+			{
+				"tag": "h2",
+				"text": "Sudoku Solver"
+			},
+			{
+				"tag": "button",
+				"text": "New Puzzle",
+				"callback": function(el) {
+					btnNewPzl = el;
+					el.onfocus = function() {
+						this.blur && this.blur();
+					};
+				}
+			},
+			{
+				"tag": "button",
+				"text": "Solve",
+				"callback": function(el) {
+					btnSolve = el;
+					el.onfocus = function() {
+						this.blur && this.blur();
+					};
+				}
+			},
+			{
+				"tag": "div",
+				"callback": function(el) {
+					divPzl = el;
+				}
+			},
+			{
+				"tag": "div",
+				"callback": function(el) {
+					divMsg = el;
+				}
+			}
+		]
+	}
+];
 
-var viewHolder = createElement('div');
-
-var createAndAttachToViewHolder = compose(
-	createElement,
-	appendChild,
-	wrap(viewHolder)
-);
-
-createAndAppendTextNode('Sudoku Solver', createAndAttachToViewHolder('h2'));
-var btnNewPzl = createAndAttachToViewHolder('button');
-var btnSolve = createAndAttachToViewHolder('button');
-var divPzl = createAndAttachToViewHolder('div');
-var divMsg = setAttribute(createAndAttachToViewHolder('div'), "class", 'msg');
-
-createAndAppendTextNode('New Puzzle', btnNewPzl);
-createAndAppendTextNode('Solve!', btnSolve);
-
-btnNewPzl.onfocus = function() {
-	this.blur && this.blur();
-};
-btnSolve.onfocus = function() {
-	this.blur && this.blur();
-};
+jsmlParser(jsml0, document.body);
 
 var createOption = function(parent) {
 	return function(i) {
@@ -40,8 +68,28 @@ var createOption = function(parent) {
 function newPuzzle() {
 	infanticide(divMsg);
 	infanticide(divPzl);
+	var iterateFrom1 = iterateFrom(1);
 	var iterate3 = iterateFrom1(3);
 	var iterate9 = iterateFrom1(9);
+
+	var jsml1 = [
+		{
+			"tag": "table",
+			"children": [
+				{
+					"tag": "tr"
+				}
+			]
+		}
+	];
+
+
+
+	jsmlParser(jsml1, divPzl);
+
+
+
+
 	var table = createElement('table');
 	var l1 = function(v) {
 			var tr = createAndAppendChild('tr', table);

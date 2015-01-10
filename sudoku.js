@@ -20,7 +20,11 @@ var setAttribute = function(el, name, val) {
   el.setAttribute(name, val);
   return el;
 };
-
+var infanticide = function(node) {
+  while (node.firstChild) {
+    node.removeChild(node.firstChild);
+  }
+};
 
 module.exports = function(obj) {
   obj.createElement = createElement;
@@ -29,45 +33,165 @@ module.exports = function(obj) {
   obj.createAndAppendChild = createAndAppendChild;
   obj.createAndAppendTextNode = createAndAppendTextNode;
   obj.setAttribute = setAttribute;
+  obj.infanticide = infanticide;
 };
 
 },{}],2:[function(require,module,exports){
-require('./domManipulation.js')(window);
-require('./spiceRack.js')(window);
-
-
-var iterateFrom1 = iterateFrom(1);
-var iterateFrom0 = iterateFrom(0);
-
-var viewHolder = createElement('div');
-
-var createAndAttachToViewHolder = compose(
-	createElement,
-	appendChild,
-	wrap(viewHolder)
-);
-
-createAndAppendTextNode('Sudoku Solver', createAndAttachToViewHolder('h2'));
-var btnNewPzl = createAndAttachToViewHolder('button');
-var btnSolve = createAndAttachToViewHolder('button');
-var divPzl = createAndAttachToViewHolder('div');
-var divMsg = setAttribute(createAndAttachToViewHolder('div'), "class", 'msg');
-
-createAndAppendTextNode('New Puzzle', btnNewPzl);
-createAndAppendTextNode('Solve!', btnSolve);
-
-btnNewPzl.onfocus = function() {
-	this.blur && this.blur();
+var iterateFrom = function(fr) {
+    return function(count) {
+        return function(fn) {
+            var from = fr;
+            var to = count + fr;
+            while (from < to) {
+                fn(from++);
+            }
+        };
+    };
 };
-btnSolve.onfocus = function() {
-	this.blur && this.blur();
+
+var compose = function() {
+    var fns = arguments;
+    return function(x) {
+        iterateFrom(0)(fns.length)(function(i) {
+            x = fns[i].call(this, x);
+        });
+        return x;
+    };
+};
+
+var wrap = function(parent) {
+    return function(fn) {
+        return fn(parent);
+    };
+};
+
+var createElement = function(tag) {
+    return document.createElement(tag);
+};
+
+var createTextNode = function(txt) {
+    return document.createTextNode(txt);
+};
+
+var appendChild = function(child) {
+    return function(parent) {
+        return parent.appendChild(child);
+    };
+};
+
+var createAndAppendChild = function(tag, parent) {
+    return appendChild(createElement(tag))(parent);
+};
+
+var createAndAppendTextNode = function(txt, parent) {
+    return appendChild(createTextNode(txt))(parent);
+};
+
+var setAttribute = function(el, name, val) {
+    el.setAttribute(name, val);
+    return el;
+};
+
+var setClassName = function(el, name) {
+    el.className = name;
+    return el;
 };
 
 var infanticide = function(node) {
-	while (node.firstChild) {
-		node.removeChild(node.firstChild);
-	}
+    while (node.firstChild) {
+        node.removeChild(node.firstChild);
+    }
 };
+
+var setAttribute = function(el, name, val) {
+    el.setAttribute(name, val);
+    return el;
+};
+
+var jsmlWalker = function arrayWalker(fn) {
+    return function recurse(arr) {
+        var i;
+        for (i = 0; i < arr.length; i++) {
+            fn(arr[i]);
+            arr[i].children && recurse(arr[i].children);
+        }
+    };
+};
+
+var jsmlWalkerCallback = function(parentNode, callback) {
+    return function(el) {
+        var domEl = createElement(el.tag);
+        callback && callback(domEl);
+        el.callback && el.callback(domEl);
+        el.text && appendChild(createTextNode(el.text))(domEl);
+        el.className && setClassName(domEl, el.className);
+        appendChild(domEl)(parentNode);
+    };
+};
+
+module.exports = function(jsml, parentNode, callback) {
+    jsmlWalker(jsmlWalkerCallback(parentNode, callback))(jsml);
+};
+
+},{}],3:[function(require,module,exports){
+require('./domManipulation.js')(window);
+	require('./spiceRack.js')(window);
+var jsmlParser = require('./jsmlParser.js');
+
+var btnNewPzl;
+var btnSolve;
+var divPzl;
+var divMsg;
+var viewHolder;
+
+var jsml0 = [
+	{
+		"tag": "div",
+		"callback": function(el) {
+			viewHolder = el;
+		},
+		"children": [
+			{
+				"tag": "h2",
+				"text": "Sudoku Solver"
+			},
+			{
+				"tag": "button",
+				"text": "New Puzzle",
+				"callback": function(el) {
+					btnNewPzl = el;
+					el.onfocus = function() {
+						this.blur && this.blur();
+					};
+				}
+			},
+			{
+				"tag": "button",
+				"text": "Solve",
+				"callback": function(el) {
+					btnSolve = el;
+					el.onfocus = function() {
+						this.blur && this.blur();
+					};
+				}
+			},
+			{
+				"tag": "div",
+				"callback": function(el) {
+					divPzl = el;
+				}
+			},
+			{
+				"tag": "div",
+				"callback": function(el) {
+					divMsg = el;
+				}
+			}
+		]
+	}
+];
+
+jsmlParser(jsml0, document.body);
 
 var createOption = function(parent) {
 	return function(i) {
@@ -80,8 +204,28 @@ var createOption = function(parent) {
 function newPuzzle() {
 	infanticide(divMsg);
 	infanticide(divPzl);
+	var iterateFrom1 = iterateFrom(1);
 	var iterate3 = iterateFrom1(3);
 	var iterate9 = iterateFrom1(9);
+
+	var jsml1 = [
+		{
+			"tag": "table",
+			"children": [
+				{
+					"tag": "tr"
+				}
+			]
+		}
+	];
+
+
+
+	jsmlParser(jsml1, divPzl);
+
+
+
+
 	var table = createElement('table');
 	var l1 = function(v) {
 			var tr = createAndAppendChild('tr', table);
@@ -519,7 +663,7 @@ window.sudoku = {
 };
 window.sudoku.on();
 
-},{"./domManipulation.js":1,"./spiceRack.js":3}],3:[function(require,module,exports){
+},{"./domManipulation.js":1,"./jsmlParser.js":2,"./spiceRack.js":4}],4:[function(require,module,exports){
 var iterateFrom = function(fr) {
   return function(count) {
     return function(fn) {
@@ -552,4 +696,4 @@ module.exports = function(obj) {
   obj.wrap = wrap;
 };
 
-},{}]},{},[2]);
+},{}]},{},[3]);
