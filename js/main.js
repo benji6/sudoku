@@ -66,7 +66,7 @@ function newPuzzle() {
 		};
 	}());
 
-	var jsmlSudokuView = {
+	jsmlParse({
 		tag: "table",
 		children:{
 			tag: "tr",
@@ -84,9 +84,7 @@ function newPuzzle() {
 							count: "3",
 							children: {
 								tag: "select",
-								callback: function(el, parentNode, count) {
-									el.id = getId();
-								},
+								id: getId,
 								children: {
 									tag: "option",
 									count: "10",
@@ -104,9 +102,7 @@ function newPuzzle() {
 				}
 			}
 		}
-	};
-
-	jsmlParse(jsmlSudokuView, divPzl);
+	}, divPzl);
 }
 function solver() {
 	//declare local variables
