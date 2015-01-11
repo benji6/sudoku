@@ -80,16 +80,23 @@ var jsmlWalker = function jsmlWalker(fn) {
   return function recurse(jsml) {
     return function(parentNode) {
       var domEl;
-      fnParentSet = fn(parentNode);
+      var fnParentSet = fn(parentNode);
+      var run = function(jsml) {
+        if (!jsml.count) {
+          jsml.count = 1;
+        }
+        for (var i = 0; i < jsml.count; i++) {
+          domEl = fnParentSet(jsml, i);
+          jsml.children && recurse(jsml.children)(domEl);
+        }
+      };
       if (jsml.constructor === Array) {
         var i;
         for (i = 0; i < jsml.length; i++) {
-          domEl = fnParentSet(jsml[i]);
-          jsml[i].children && recurse(jsml[i].children)(domEl);
+          run(jsml[i]);
         }
       } else {
-        domEl = fnParentSet(jsml);
-        jsml.children && recurse(jsml.children)(domEl);
+        run(jsml);
       }
     };
   };
@@ -97,21 +104,16 @@ var jsmlWalker = function jsmlWalker(fn) {
 
 var jsmlWalkerCallback = function(forEachCallback) {
   return function(parentNode) {
-    return function recurse(el, recurseCount) {
-      if (!recurseCount) {
-        recurseCount = 0;
+    return function(el, count) {
+      if (!count) {
+        count = 0;
       }
       var domEl = createElement(el.tag);
-      forEachCallback && calforEachCallbacklback(domEl, parentNode, recurseCount);
-      el.callback && el.callback(domEl, parentNode, recurseCount);
+      forEachCallback && calforEachCallbacklback(domEl, parentNode, count);
+      el.callback && el.callback(domEl, parentNode, count);
       el.text && appendChild(createTextNode(el.text))(domEl);
       el.className && setClassName(domEl, el.className);
       appendChild(domEl)(parentNode);
-      if (el.count) {
-        if (++recurseCount < parseInt(el.count)) {
-          recurse(el, recurseCount);
-        }
-      }
       return domEl;
     };
   };

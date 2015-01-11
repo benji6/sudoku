@@ -66,66 +66,47 @@ function newPuzzle() {
 		};
 	}());
 
-	var jsmlTable0 = {
-			"tag": "table",
-			"callback": function(el) {
-				jsmlParse(jsmlTr0, el);
+	var jsmlSudokuView = {
+		tag: "table",
+		children:{
+			tag: "tr",
+			count: "3",
+			children: {
+				tag: "td",
+				count: "3",
+				children: {
+					tag: "table",
+					children: {
+						tag: "tr",
+						count: "3",
+						children: {
+							tag: "td",
+							count: "3",
+							children: {
+								tag: "select",
+								callback: function(el, parentNode, count) {
+									el.id = getId();
+								},
+								children: {
+									tag: "option",
+									count: "10",
+									callback: function(el, parentNode, count) {
+										if (!count) {
+											this.text = '';
+											return;
+										}
+										this.text = count.toString();
+									}
+								}
+							}
+						}
+					}
+				}
 			}
-		};
-	var jsmlTr0 = {
-		"tag": "tr",
-		"count": "3",
-		"callback": function(el, parentNode, count) {
-			jsmlParse(jsmlTd0, el);
-		}
-	};
-	var jsmlTd0 = {
-		"tag": "td",
-		"count": "3",
-		"callback": function(el, parentNode, count) {
-			jsmlParse(jsmlTable1, el);
-		}
-	};
-	var jsmlTable1 = {
-		"tag": "table",
-		"callback": function(el) {
-			jsmlParse(jsmlTr1, el);
-		}
-	};
-	var jsmlTr1 = {
-		"tag": "tr",
-		"count": "3",
-		"callback": function(el, parentNode, count) {
-			jsmlParse(jsmlTd1, el);
-		}
-	};
-	var jsmlTd1 = {
-		"tag": "td",
-		"count": "3",
-		"callback": function(el, parentNode, count) {
-			jsmlParse(jsmlSelect, el);
-		}
-	};
-	var jsmlSelect = {
-		"tag": "select",
-		"callback": function(el, parentNode, count) {
-			el.id = getId();
-			jsmlParse(jsmlOptions, el);
-		}
-	};
-	var jsmlOptions = {
-		"tag": "option",
-		"count": "10",
-		"callback": function(el, parentNode, count) {
-			if (!count) {
-				this.text = '';
-				return;
-			}
-			this.text = count.toString();
 		}
 	};
 
-	jsmlParse(jsmlTable0, divPzl);
+	jsmlParse(jsmlSudokuView, divPzl);
 }
 function solver() {
 	//declare local variables

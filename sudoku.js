@@ -119,16 +119,23 @@ var jsmlWalker = function jsmlWalker(fn) {
   return function recurse(jsml) {
     return function(parentNode) {
       var domEl;
-      fnParentSet = fn(parentNode);
+      var fnParentSet = fn(parentNode);
+      var run = function(jsml) {
+        if (!jsml.count) {
+          jsml.count = 1;
+        }
+        for (var i = 0; i < jsml.count; i++) {
+          domEl = fnParentSet(jsml, i);
+          jsml.children && recurse(jsml.children)(domEl);
+        }
+      };
       if (jsml.constructor === Array) {
         var i;
         for (i = 0; i < jsml.length; i++) {
-          domEl = fnParentSet(jsml[i]);
-          jsml[i].children && recurse(jsml[i].children)(domEl);
+          run(jsml[i]);
         }
       } else {
-        domEl = fnParentSet(jsml);
-        jsml.children && recurse(jsml.children)(domEl);
+        run(jsml);
       }
     };
   };
@@ -136,21 +143,16 @@ var jsmlWalker = function jsmlWalker(fn) {
 
 var jsmlWalkerCallback = function(forEachCallback) {
   return function(parentNode) {
-    return function recurse(el, recurseCount) {
-      if (!recurseCount) {
-        recurseCount = 0;
+    return function(el, count) {
+      if (!count) {
+        count = 0;
       }
       var domEl = createElement(el.tag);
-      forEachCallback && calforEachCallbacklback(domEl, parentNode, recurseCount);
-      el.callback && el.callback(domEl, parentNode, recurseCount);
+      forEachCallback && calforEachCallbacklback(domEl, parentNode, count);
+      el.callback && el.callback(domEl, parentNode, count);
       el.text && appendChild(createTextNode(el.text))(domEl);
       el.className && setClassName(domEl, el.className);
       appendChild(domEl)(parentNode);
-      if (el.count) {
-        if (++recurseCount < parseInt(el.count)) {
-          recurse(el, recurseCount);
-        }
-      }
       return domEl;
     };
   };
@@ -230,66 +232,47 @@ function newPuzzle() {
 		};
 	}());
 
-	var jsmlTable0 = {
-			"tag": "table",
-			"callback": function(el) {
-				jsmlParse(jsmlTr0, el);
+	var jsmlSudokuView = {
+		tag: "table",
+		children:{
+			tag: "tr",
+			count: "3",
+			children: {
+				tag: "td",
+				count: "3",
+				children: {
+					tag: "table",
+					children: {
+						tag: "tr",
+						count: "3",
+						children: {
+							tag: "td",
+							count: "3",
+							children: {
+								tag: "select",
+								callback: function(el, parentNode, count) {
+									el.id = getId();
+								},
+								children: {
+									tag: "option",
+									count: "10",
+									callback: function(el, parentNode, count) {
+										if (!count) {
+											this.text = '';
+											return;
+										}
+										this.text = count.toString();
+									}
+								}
+							}
+						}
+					}
+				}
 			}
-		};
-	var jsmlTr0 = {
-		"tag": "tr",
-		"count": "3",
-		"callback": function(el, parentNode, count) {
-			jsmlParse(jsmlTd0, el);
-		}
-	};
-	var jsmlTd0 = {
-		"tag": "td",
-		"count": "3",
-		"callback": function(el, parentNode, count) {
-			jsmlParse(jsmlTable1, el);
-		}
-	};
-	var jsmlTable1 = {
-		"tag": "table",
-		"callback": function(el) {
-			jsmlParse(jsmlTr1, el);
-		}
-	};
-	var jsmlTr1 = {
-		"tag": "tr",
-		"count": "3",
-		"callback": function(el, parentNode, count) {
-			jsmlParse(jsmlTd1, el);
-		}
-	};
-	var jsmlTd1 = {
-		"tag": "td",
-		"count": "3",
-		"callback": function(el, parentNode, count) {
-			jsmlParse(jsmlSelect, el);
-		}
-	};
-	var jsmlSelect = {
-		"tag": "select",
-		"callback": function(el, parentNode, count) {
-			el.id = getId();
-			jsmlParse(jsmlOptions, el);
-		}
-	};
-	var jsmlOptions = {
-		"tag": "option",
-		"count": "10",
-		"callback": function(el, parentNode, count) {
-			if (!count) {
-				this.text = '';
-				return;
-			}
-			this.text = count.toString();
 		}
 	};
 
-	jsmlParse(jsmlTable0, divPzl);
+	jsmlParse(jsmlSudokuView, divPzl);
 }
 function solver() {
 	//declare local variables
