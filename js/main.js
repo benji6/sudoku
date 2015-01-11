@@ -8,7 +8,7 @@ var divPzl;
 var divMsg;
 var viewHolder;
 
-var jsml0 = [
+jsmlParse([
 	{
 		"tag": "div",
 		"callback": function(el) {
@@ -53,25 +53,11 @@ var jsml0 = [
 			}
 		]
 	}
-];
-
-jsmlParse(jsml0, document.body);
-
-var createOption = function(parent) {
-	return function(i) {
-		option = parent.appendChild(document.createElement('option'));
-		option.value = i;
-		option.appendChild(document.createTextNode(i));
-	};
-};
+], document.body);
 
 function newPuzzle() {
 	infanticide(divMsg);
 	infanticide(divPzl);
-	var iterateFrom1 = iterateFrom(1);
-	var iterate3 = iterateFrom1(3);
-	var iterate9 = iterateFrom1(9);
-
 
 	var getId = (function() {
 		var id = 0;
@@ -79,7 +65,6 @@ function newPuzzle() {
 			return id++;
 		};
 	}());
-
 
 	var jsmlTable0 = {
 			"tag": "table",
@@ -118,8 +103,6 @@ function newPuzzle() {
 		"tag": "td",
 		"count": "3",
 		"callback": function(el, parentNode, count) {
-
-
 			jsmlParse(jsmlSelect, el);
 		}
 	};
