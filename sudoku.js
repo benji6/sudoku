@@ -249,16 +249,13 @@ function newPuzzle() {
 		"tag": "tr",
 		"count": "3",
 		"callback": function(el, parentNode, count) {
-			el.id = count.toString();
 			jsmlParse(jsmlTd0, el);
 		}
 	};
 	var jsmlTd0 = {
 		"tag": "td",
 		"count": "3",
-		"text": "hello",
 		"callback": function(el, parentNode, count) {
-			this.text = (parseInt(parentNode.id) * this.count + count).toString();
 			jsmlParse(jsmlTable1, el);
 		}
 	};
@@ -272,16 +269,31 @@ function newPuzzle() {
 		"tag": "tr",
 		"count": "3",
 		"callback": function(el, parentNode, count) {
-			el.id = count.toString();
 			jsmlParse(jsmlTd1, el);
 		}
 	};
 	var jsmlTd1 = {
 		"tag": "td",
 		"count": "3",
-		"text": "hello",
 		"callback": function(el, parentNode, count) {
-			this.text = (parseInt(parentNode.id) * this.count + count).toString();
+			jsmlParse(jsmlSelect, el);
+		}
+	};
+	var jsmlSelect = {
+		"tag": "select",
+		"callback": function(el, parentNode, count) {
+			jsmlParse(jsmlOptions, el);
+		}
+	};
+	var jsmlOptions = {
+		"tag": "option",
+		"count": "10",
+		"callback": function(el, parentNode, count) {
+			if (!count) {
+				this.text = '';
+				return;
+			}
+			this.text = count.toString();
 		}
 	};
 
