@@ -102,20 +102,20 @@ var jsmlWalker = function jsmlWalker(fn) {
   };
 };
 
-var attrSetter = function(el, prop, domEl, fn) {
+var attrSetter = function(el, prop, domEl, fn, count) {
   if (el[prop]) {
     if (typeof el[prop] === "function") {
-      fn(domEl, el[prop]());
+      fn(domEl, el[prop](count));
       return;
     }
     fn(domEl, el[prop]);
   }
 };
 
-var textSetter = function(text, domEl) {
+var textSetter = function(text, domEl, count) {
   if (text) {
     if (typeof text === "function") {
-      appendChild(createTextNode(text()))(domEl);
+      appendChild(createTextNode(text(count)))(domEl);
       return;
     }
     appendChild(createTextNode(text))(domEl);
@@ -131,7 +131,7 @@ var jsmlWalkerCallback = function(forEachCallback) {
       var domEl = createElement(el.tag);
       forEachCallback && forEachCallback(domEl, parentNode, count);
       el.callback && el.callback(domEl, parentNode, count);
-      textSetter(el.text, domEl);
+      textSetter(el.text, domEl, count);
       attrSetter(el, "id", domEl, setId);
       attrSetter(el, "class", domEl, setClassName);
       appendChild(domEl)(parentNode);
