@@ -88,12 +88,11 @@ function newPuzzle() {
 								children: {
 									tag: "option",
 									count: "10",
-									callback: function(el, parentNode, count) {
+									text: function(count) {
 										if (!count) {
-											this.text = '';
-											return;
+											return '';
 										}
-										this.text = count.toString();
+										return count;
 									}
 								}
 							}

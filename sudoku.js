@@ -141,6 +141,26 @@ var jsmlWalker = function jsmlWalker(fn) {
   };
 };
 
+var attrSetter = function(el, prop, domEl, fn) {
+  if (el[prop]) {
+    if (typeof el[prop] === "function") {
+      fn(domEl, el[prop]());
+      return;
+    }
+    fn(domEl, el[prop]);
+  }
+};
+
+var textSetter = function(text, domEl) {
+  if (text) {
+    if (typeof text === "function") {
+      appendChild(createTextNode(text()))(domEl);
+      return;
+    }
+    appendChild(createTextNode(text))(domEl);
+  }
+};
+
 var jsmlWalkerCallback = function(forEachCallback) {
   return function(parentNode) {
     return function(el, count) {
@@ -148,10 +168,11 @@ var jsmlWalkerCallback = function(forEachCallback) {
         count = 0;
       }
       var domEl = createElement(el.tag);
-      forEachCallback && calforEachCallbacklback(domEl, parentNode, count);
+      forEachCallback && forEachCallback(domEl, parentNode, count);
       el.callback && el.callback(domEl, parentNode, count);
-      el.text && appendChild(createTextNode(el.text))(domEl);
-      el.className && setClassName(domEl, el.className);
+      textSetter(el.text, domEl);
+      attrSetter(el, "id", domEl, setId);
+      attrSetter(el, "class", domEl, setClassName);
       appendChild(domEl)(parentNode);
       return domEl;
     };
@@ -232,7 +253,7 @@ function newPuzzle() {
 		};
 	}());
 
-	var jsmlSudokuView = {
+	jsmlParse({
 		tag: "table",
 		children:{
 			tag: "tr",
@@ -250,18 +271,15 @@ function newPuzzle() {
 							count: "3",
 							children: {
 								tag: "select",
-								callback: function(el, parentNode, count) {
-									el.id = getId();
-								},
+								id: getId,
 								children: {
 									tag: "option",
 									count: "10",
-									callback: function(el, parentNode, count) {
+									text: function(count) {
 										if (!count) {
-											this.text = '';
-											return;
+											return '';
 										}
-										this.text = count.toString();
+										return count;
 									}
 								}
 							}
@@ -270,9 +288,7 @@ function newPuzzle() {
 				}
 			}
 		}
-	};
-
-	jsmlParse(jsmlSudokuView, divPzl);
+	}, divPzl);
 }
 function solver() {
 	//declare local variables
