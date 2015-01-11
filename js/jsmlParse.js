@@ -69,28 +69,18 @@ var setAttribute = function(el, name, val) {
   return el;
 };
 
-var jsmlArrayWalker = function arrayWalker(fn) {
-  return function recurse(arr) {
-    var i;
-    for (i = 0; i < arr.length; i++) {
-      fn(arr[i]);
-      arr[i].children && recurse(arr[i].children);
+var jsmlWalker = function arrayWalker(fn) {
+  return function recurse(jsml) {
+    if (jsml.constructor === Array) {
+      var i;
+      for (i = 0; i < jsml.length; i++) {
+        fn(jsml[i]);
+        jsml[i].children && recurse(jsml[i].children);
+      }
+    } else {
+      fn(jsml);
+      jsml.children && recurse(jsml.children);
     }
-  };
-};
-
-var jsmlObjectWalker = function arrayWalker(fn) {
-  var recurse = function recurse(arr) {
-    var i;
-    for (i = 0; i < arr.length; i++) {
-      fn(arr[i]);
-      arr[i].children && recurse(arr[i].children);
-    }
-  };
-  return function(obj) {
-    var i;
-    fn(obj);
-    obj.children && recurse(obj.children);
   };
 };
 
@@ -116,10 +106,6 @@ var jsmlWalkerCallback = function(parentNode) {
 };
 
 jsmlParse = function(jsml, parentNode, forEachCallback) {
-  if (jsml.constructor === Array) {
-    jsmlArrayWalker(jsmlWalkerCallback(parentNode)(forEachCallback))(jsml);
-  } else {
-    jsmlObjectWalker(jsmlWalkerCallback(parentNode)(forEachCallback))(jsml);
-  }
+  jsmlWalker(jsmlWalkerCallback(parentNode)(forEachCallback))(jsml);
 };
 module.exports = jsmlParse;

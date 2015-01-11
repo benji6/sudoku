@@ -1,5 +1,5 @@
 require('./domManipulation.js')(window);
-	require('./spiceRack.js')(window);
+require('./spiceRack.js')(window);
 var jsmlParse = require('./jsmlParse.js');
 
 var btnNewPzl;
@@ -73,6 +73,14 @@ function newPuzzle() {
 	var iterate9 = iterateFrom1(9);
 
 
+	var getId = (function() {
+		var id = 0;
+		return function() {
+			return id++;
+		};
+	}());
+
+
 	var jsmlTable0 = {
 			"tag": "table",
 			"callback": function(el) {
@@ -110,12 +118,15 @@ function newPuzzle() {
 		"tag": "td",
 		"count": "3",
 		"callback": function(el, parentNode, count) {
+
+
 			jsmlParse(jsmlSelect, el);
 		}
 	};
 	var jsmlSelect = {
 		"tag": "select",
 		"callback": function(el, parentNode, count) {
+			el.id = getId();
 			jsmlParse(jsmlOptions, el);
 		}
 	};
@@ -132,31 +143,6 @@ function newPuzzle() {
 	};
 
 	jsmlParse(jsmlTable0, divPzl);
-
-
-	var table = createElement('table');
-	var l1 = function(v) {
-			var tr = createAndAppendChild('tr', table);
-			var l2 = function(w) {
-				var td = createAndAppendChild('td', tr);
-				var table2 = createAndAppendChild('table', td);
-				var l3 = function(x) {
-					var tr2 = createAndAppendChild('tr', table2);
-					var l4 = function(y) {
-						var k=(v*3+x)*9+w*3+y-40;
-						var td2 = createAndAppendChild('td', tr2);
-						var select = setAttribute(createAndAppendChild('select', td2), 'id', k);
-						createOption(select)('');
-						iterate9(createOption(select));
-					};
-					iterate3(l4);
-				};
-				iterate3(l3);
-			};
-			iterate3(l2);
-	};
-	iterate3(l1);
-	divPzl.appendChild(table);
 }
 function solver() {
 	//declare local variables
@@ -562,6 +548,7 @@ function on() {
 	appendChild(viewHolder)(document.body);
 }
 function off() {
+	console.log(viewHolder.firstChild);
 	viewHolder.parentNode && viewHolder.parentNode.removeChild(viewHolder);
 }
 
