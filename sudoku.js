@@ -53,7 +53,9 @@ var compose = function() {
   var fns = arguments;
   return function(x) {
     iterateFrom(0)(fns.length)(function(i) {
-      x = fns[i].call(this, x);
+      if (fns[i]) {
+        x = fns[i].call(this, x);
+      }
     });
     return x;
   };
@@ -92,6 +94,11 @@ var setAttribute = function(el, name, val) {
   return el;
 };
 
+var setId = function(el, name) {
+  el.id = name;
+  return el;
+};
+
 var setClassName = function(el, name) {
   el.className = name;
   return el;
@@ -108,23 +115,27 @@ var setAttribute = function(el, name, val) {
   return el;
 };
 
-var jsmlWalker = function arrayWalker(fn) {
+var jsmlWalker = function jsmlWalker(fn) {
   return function recurse(jsml) {
-    if (jsml.constructor === Array) {
-      var i;
-      for (i = 0; i < jsml.length; i++) {
-        fn(jsml[i]);
-        jsml[i].children && recurse(jsml[i].children);
+    return function(parentNode) {
+      var domEl;
+      fnParentSet = fn(parentNode);
+      if (jsml.constructor === Array) {
+        var i;
+        for (i = 0; i < jsml.length; i++) {
+          domEl = fnParentSet(jsml[i]);
+          jsml[i].children && recurse(jsml[i].children)(domEl);
+        }
+      } else {
+        domEl = fnParentSet(jsml);
+        jsml.children && recurse(jsml.children)(domEl);
       }
-    } else {
-      fn(jsml);
-      jsml.children && recurse(jsml.children);
-    }
+    };
   };
 };
 
-var jsmlWalkerCallback = function(parentNode) {
-  return function(forEachCallback) {
+var jsmlWalkerCallback = function(forEachCallback) {
+  return function(parentNode) {
     return function recurse(el, recurseCount) {
       if (!recurseCount) {
         recurseCount = 0;
@@ -140,12 +151,13 @@ var jsmlWalkerCallback = function(parentNode) {
           recurse(el, recurseCount);
         }
       }
+      return domEl;
     };
   };
 };
 
 jsmlParse = function(jsml, parentNode, forEachCallback) {
-  jsmlWalker(jsmlWalkerCallback(parentNode)(forEachCallback))(jsml);
+  jsmlWalker(jsmlWalkerCallback(forEachCallback))(jsml)(parentNode);
 };
 module.exports = jsmlParse;
 
