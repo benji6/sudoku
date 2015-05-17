@@ -1,199 +1,16 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var createElement = function(tag) {
-  return document.createElement(tag);
-};
-var createTextNode = function(txt) {
-  return document.createTextNode(txt);
-};
-var appendChild = function(child) {
-  return function(parent) {
-    return parent.appendChild(child);
-  };
-};
-var createAndAppendChild = function(tag, parent) {
-  return appendChild(createElement(tag))(parent);
-};
-var createAndAppendTextNode = function(txt, parent) {
-  return appendChild(createTextNode(txt))(parent);
-};
-var setAttribute = function(el, name, val) {
-  el.setAttribute(name, val);
-  return el;
-};
-var infanticide = function(node) {
-  while (node.firstChild) {
-    node.removeChild(node.firstChild);
-  }
-};
-
-module.exports = function(obj) {
-  obj.createElement = createElement;
-  obj.createTextNode = createTextNode;
-  obj.appendChild = appendChild;
-  obj.createAndAppendChild = createAndAppendChild;
-  obj.createAndAppendTextNode = createAndAppendTextNode;
-  obj.setAttribute = setAttribute;
-  obj.infanticide = infanticide;
-};
-
-},{}],2:[function(require,module,exports){
-var iterateFrom = function(fr) {
-  return function(count) {
-    return function(fn) {
-      var from = fr;
-      var to = count + fr;
-      while (from < to) {
-        fn(from++);
-      }
-    };
-  };
-};
-
-var compose = function() {
-  var fns = arguments;
-  return function(x) {
-    iterateFrom(0)(fns.length)(function(i) {
-      if (fns[i]) {
-        x = fns[i].call(this, x);
-      }
-    });
-    return x;
-  };
-};
-
-var wrap = function(parent) {
-  return function(fn) {
-    return fn(parent);
-  };
-};
-
-var createElement = function(tag) {
-  return document.createElement(tag);
-};
-
-var createTextNode = function(txt) {
-  return document.createTextNode(txt);
-};
-
-var appendChild = function(child) {
-  return function(parent) {
-    return parent.appendChild(child);
-  };
-};
-
-var createAndAppendChild = function(tag, parent) {
-  return appendChild(createElement(tag))(parent);
-};
-
-var createAndAppendTextNode = function(txt, parent) {
-  return appendChild(createTextNode(txt))(parent);
-};
-
-var setAttribute = function(el, name, val) {
-  el.setAttribute(name, val);
-  return el;
-};
-
-var setId = function(el, name) {
-  el.id = name;
-  return el;
-};
-
-var setClassName = function(el, name) {
-  el.className = name;
-  return el;
-};
-
-var infanticide = function(node) {
-  while (node.firstChild) {
-    node.removeChild(node.firstChild);
-  }
-};
-
-var setAttribute = function(el, name, val) {
-  el.setAttribute(name, val);
-  return el;
-};
-
-var jsmlWalker = function jsmlWalker(fn) {
-  return function recurse(jsml) {
-    return function(parentNode) {
-      var domEl;
-      var fnParentSet = fn(parentNode);
-      var run = function(jsml) {
-        if (!jsml.count) {
-          jsml.count = 1;
-        }
-        for (var i = 0; i < jsml.count; i++) {
-          domEl = fnParentSet(jsml, i);
-          jsml.children && recurse(jsml.children)(domEl);
-        }
-      };
-      if (jsml.constructor === Array) {
-        var i;
-        for (i = 0; i < jsml.length; i++) {
-          run(jsml[i]);
-        }
-      } else {
-        run(jsml);
-      }
-    };
-  };
-};
-
-var attrSetter = function(el, prop, domEl, fn, count) {
-  if (el[prop]) {
-    if (typeof el[prop] === "function") {
-      fn(domEl, el[prop](count));
-      return;
-    }
-    fn(domEl, el[prop]);
-  }
-};
-
-var textSetter = function(text, domEl, count) {
-  if (text) {
-    if (typeof text === "function") {
-      appendChild(createTextNode(text(count)))(domEl);
-      return;
-    }
-    appendChild(createTextNode(text))(domEl);
-  }
-};
-
-var jsmlWalkerCallback = function(forEachCallback) {
-  return function(parentNode) {
-    return function(el, count) {
-      if (!count) {
-        count = 0;
-      }
-      var domEl = createElement(el.tag);
-      forEachCallback && forEachCallback(domEl, parentNode, count);
-      el.callback && el.callback(domEl, parentNode, count);
-      textSetter(el.text, domEl, count);
-      attrSetter(el, "id", domEl, setId);
-      attrSetter(el, "class", domEl, setClassName);
-      appendChild(domEl)(parentNode);
-      return domEl;
-    };
-  };
-};
-
-jsmlParse = function(jsml, parentNode, forEachCallback) {
-  jsmlWalker(jsmlWalkerCallback(forEachCallback))(jsml)(parentNode);
-};
-module.exports = jsmlParse;
-
-},{}],3:[function(require,module,exports){
-require('./domManipulation.js')(window);
-require('./spiceRack.js')(window);
-var jsmlParse = require('./jsmlParse.js');
+var jsmlParse = require('jsml-parse');
 
 var btnNewPzl;
 var btnSolve;
 var divPzl;
 var divMsg;
 var viewHolder;
+
+var infanticide = function (domEl) {
+	while (domEl.firstChild) {
+		domEl.removeChild(domEl.firstChild);
+	}
+};
 
 jsmlParse([
 	{
@@ -203,28 +20,34 @@ jsmlParse([
 		},
 		"children": [
 			{
-				"tag": "h2",
+				"tag": "h1",
 				"text": "Sudoku Solver"
 			},
 			{
-				"tag": "button",
-				"text": "New Puzzle",
-				"callback": function(el) {
-					btnNewPzl = el;
-					el.onfocus = function() {
-						this.blur && this.blur();
-					};
-				}
-			},
-			{
-				"tag": "button",
-				"text": "Solve",
-				"callback": function(el) {
-					btnSolve = el;
-					el.onfocus = function() {
-						this.blur && this.blur();
-					};
-				}
+				tag: "div",
+				className: "center",
+				children: [
+					{
+						"tag": "button",
+						"text": "New Puzzle",
+						"callback": function(el) {
+							btnNewPzl = el;
+							el.onfocus = function() {
+								this.blur && this.blur();
+							};
+						}
+					},
+					{
+						"tag": "button",
+						"text": "Solve",
+						"callback": function(el) {
+							btnSolve = el;
+							el.onfocus = function() {
+								this.blur && this.blur();
+							};
+						}
+					}
+				]
 			},
 			{
 				"tag": "div",
@@ -233,7 +56,8 @@ jsmlParse([
 				}
 			},
 			{
-				"tag": "div",
+				tag: "div",
+				className: "center",
 				"callback": function(el) {
 					divMsg = el;
 				}
@@ -691,7 +515,7 @@ btnSolve.onclick = solver;
 
 function on() {
 	newPuzzle();
-	appendChild(viewHolder)(document.body);
+	document.body.appendChild(viewHolder);
 }
 function off() {
 	console.log(viewHolder.firstChild);
@@ -703,38 +527,3 @@ window.sudoku = {
 	off: off
 };
 window.sudoku.on();
-
-},{"./domManipulation.js":1,"./jsmlParse.js":2,"./spiceRack.js":4}],4:[function(require,module,exports){
-var iterateFrom = function(fr) {
-  return function(count) {
-    return function(fn) {
-      var from = fr;
-      var to = count + fr;
-      while (from < to) {
-        fn(from++);
-      }
-    };
-  };
-};
-var compose = function() {
-  var fns = arguments;
-  return function (x) {
-    iterateFrom(0)(fns.length)(function(i) {
-      x = fns[i].call(this, x);
-    });
-    return x;
-  };
-};
-var wrap = function(parent) {
-  return function(fn) {
-    return fn(parent);
-  };
-};
-
-module.exports = function(obj) {
-  obj.iterateFrom = iterateFrom;
-  obj.compose = compose;
-  obj.wrap = wrap;
-};
-
-},{}]},{},[3]);
