@@ -114,30 +114,33 @@ function newPuzzle() {
 		}
 	}, divPzl);
 }
+
+var y, solx, soly, solz;
+
 function solver() {
 	//declare local variables
 	var masterLooper=0;
 	//declare global variables
-	intBrute=0;
-	i=0;
-	x=1;
-	j=1;
-	z=1;
-	r=0;
-	rr=0;
-	rrfun=0;
-	c=0;
-	cc=0;
-	ccfun=0;
-	booChange=false;
-	count=0;
-	strInvalidPzlReadout="";
+	window.intBrute=0;
+	window.i=0;
+	window.x=1;
+	window.j=1;
+	window.z=1;
+	window.r=0;
+	window.rr=0;
+	window.rrfun=0;
+	window.c=0;
+	window.cc=0;
+	window.ccfun=0;
+	window.booChange=false;
+	window.count=0;
+	window.strInvalidPzlReadout="";
 	//declare global memory arrays
-	arrMemory=[];
-	arrPossValues=[];
-	arrGuessCell=[];
+	window.arrMemory=[];
+	window.arrPossValues=[];
+	window.arrGuessCell=[];
 	//create global solver array
-	arr=[];
+	window.arr=[];
 	for (i=0; i<=80; i++) {
 		arr[i]=[];
 	}
